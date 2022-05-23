@@ -1,32 +1,40 @@
-import { TestBed } from '@angular/core/testing';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AppComponent } from './app.component';
-import { NxWelcomeComponent } from './nx-welcome.component';
+import { TestBed } from '@angular/core/testing';
+import '@hirez_io/jest-given';
 
-describe('AppComponent', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [AppComponent, NxWelcomeComponent],
-    }).compileComponents();
+describe('RecruiterDashboardPageComponent', () => {
+  let componentUnderTest: AppComponent;
+
+  Given(() => {
+    TestBed.configureTestingModule({
+      providers: [AppComponent],
+    });
+
+    componentUnderTest = TestBed.inject(AppComponent);
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
+  describe('INIT: ngOnInit', () => {
+    Given(() => {
+      // TODO - fix TypeError: jest.spyOn(...).mockReturnValue is not a function
+      jest
+        .spyOn(sessionStorage, 'getItem')
+        .mockReturnValue(
+          '{"selectedTabIx":1,"selectedRecruiterId":"FAKE_RECRUITER_ID"}'
+        );
+    });
 
-  it(`should have as title 'test-angular-project'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('test-angular-project');
-  });
+    When(() => {
+      componentUnderTest.ngOnInit();
+    });
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain(
-      'Welcome test-angular-project'
-    );
+    Then(() => {
+      expect(componentUnderTest.selectedTabIx).toEqual(1);
+      expect(componentUnderTest.whichTab).toEqual(2);
+      expect(componentUnderTest.selectedRecruiterId).toEqual(
+        'FAKE_RECRUITER_ID'
+      );
+    });
   });
 });
